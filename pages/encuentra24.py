@@ -3,13 +3,14 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 from src.scraper import Scraper
+from src.utils import string_to_boolean
 
 load_dotenv()
 
 API_URL = os.getenv("ENCUENTRA24_URL")
 PAGE_URL = API_URL + "/nicaragua-es/empleos-ofertas-de-trabajos?q=f_category1.16"
 COMPANY_SKIP = os.getenv("COMPANY_SKIP")
-USE_SELENIUM = os.getenv("USE_SELENIUM")
+USE_SELENIUM = string_to_boolean(os.getenv("USE_SELENIUM"))
 
 
 def getJobsScraper(html):

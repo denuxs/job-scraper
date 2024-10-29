@@ -3,12 +3,13 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 from src.scraper import Scraper
+from src.utils import string_to_boolean
 
 load_dotenv()
 
 API_URL = os.getenv("COMPUTRABAJO_URL")
 COMPANY_SKIP = os.getenv("COMPANY_SKIP")
-USE_SELENIUM = os.getenv("USE_SELENIUM")
+USE_SELENIUM = string_to_boolean(os.getenv("USE_SELENIUM"))
 
 LOCATIONS = {
     1: "/empleos-de-informatica-y-telecom-en-matagalpa",
