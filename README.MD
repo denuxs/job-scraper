@@ -1,4 +1,4 @@
-# Python web Scraping
+# Job Scraper
 
 Aplicación Web que extrae ofertas laborales en Nicaragua de los sitios web: encuentra24, computrabajo y tecoloco.
 
@@ -25,6 +25,3 @@ Renombra el archivo .env.example a .env
 streamlit run main.py
 ```
 
-### TO DO
-
-* Agregar otros sitios web similares como tecoloco y encuentra24
