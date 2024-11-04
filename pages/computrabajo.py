@@ -7,25 +7,8 @@ from src.utils import string_to_boolean
 
 load_dotenv()
 
-API_URL = os.getenv("COMPUTRABAJO_URL")
+DOMAIN = os.getenv("COMPUTRABAJO_URL")
 COMPANY_SKIP = os.getenv("COMPANY_SKIP")
-USE_SELENIUM = string_to_boolean(os.getenv("USE_SELENIUM"))
-
-LOCATIONS = {
-    1: "/empleos-de-informatica-y-telecom-en-matagalpa",
-    2: "/empleos-de-informatica-y-telecom-en-managua",
-    3: "/empleos-de-informatica-y-telecom-en-leon",
-    4: "/empleos-de-informatica-y-telecom-en-esteli",
-    5: "/empleos-de-informatica-y-telecom-en-jinotega",
-    6: "/empleos-de-informatica-y-telecom-en-masaya",
-    7: "/empleos-de-informatica-y-telecom-en-granada",
-}
-
-
-def getLocation(option):
-    location = LOCATIONS[option]
-    return API_URL + location
-
 
 def getJobsScraper(html):
     articles = html.find_all("article")
@@ -49,25 +32,32 @@ def getJobsScraper(html):
         if company not in companySkip:
             published = paragraphes[-2].get_text(strip=True)
 
-            link = f'<a href="{API_URL}/{link}" target="_blank" >Oferta</a>'
-            data.append([title, company, link, published])
+            link = f'<a href="{DOMAIN}/{link}" target="_blank" >Oferta</a>'
+            data.append([title.upper(), company, link, published])
 
     return data
 
 
-st.subheader("Computrabajo Empleos")
-st.write("Lista de empleos por la categoria de Informática")
+st.subheader("Computrabajo, ofertas de empleo")
 
-locationOption = st.selectbox(
-    "Seleccione Departamento",
-    options=list(LOCATIONS.keys()),
-    format_func=getLocation,
-)
+pages = [
+    "/empleos-en-managua",
+    "/empleos-en-matagalpa",
+    "/empleos-en-jinotega",
+    "/empleos-en-esteli",
+    "/empleos-en-leon¨",
+    "/empleos-en-granada",
+    "/empleos-en-masaya",
+]
 
-jobUrl = getLocation(locationOption)
+categories = ["Managua", "Matagalpa", "Jinotega", "Esteli", "León", "Granada", "Masaya"]
+options = list(range(len(categories)))
+value = st.selectbox("Departamento", options, format_func=lambda x: categories[x])
 
-scraper = Scraper(use_selenium=USE_SELENIUM, use_header=True)
-html = scraper.fetch_page(jobUrl, use_header=True)
+page_url = DOMAIN + pages[value]
+
+scraper = Scraper(use_header=True)
+html = scraper.fetch_page(page_url)
 
 data = []
 row = getJobsScraper(html)
@@ -75,9 +65,9 @@ data.append(row)
 
 with st.spinner("Cargando datos..."):
     for i in range(2, 6):
-        page = jobUrl + f"?p={i}"
+        page = page_url + f"?p={i}"
 
-        html = scraper.fetch_page(page, use_header=True)
+        html = scraper.fetch_page(page)
 
         if html:
             row = getJobsScraper(html)

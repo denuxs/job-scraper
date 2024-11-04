@@ -6,6 +6,11 @@ from selenium.webdriver import Chrome, ChromeOptions, Remote
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 import sys
+from src.utils import string_to_boolean
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 USER_AGENT = [
     "Mozilla/5.0 (Linux; Android 4.4.4; [HM NOTE|NOTE-III|NOTE2 1LTET) AppleWebKit/537.39 (KHTML, like Gecko)  Chrome/53.0.2111.335 Mobile Safari/536.6"
@@ -26,8 +31,9 @@ HEADERS = {
 class Scraper:
     _sleepTime = [1, 2, 3, 4, 5]
 
-    def __init__(self, use_selenium=False, use_header=False):
-        self.use_selenium = use_selenium
+    def __init__(self, use_header=False):
+        self.use_selenium = string_to_boolean(os.getenv("USE_SELENIUM"))
+        self.use_header = use_header
         self.driver = None
 
         if self.use_selenium:
@@ -35,7 +41,7 @@ class Scraper:
             options = ChromeOptions()
             options.add_argument("--headless=new")
 
-            if use_header:
+            if self.use_header:
                 options.add_argument("--user-agent=%s" % random.choice(USER_AGENT))
             # options.page_load_strategy = 'none'
 
@@ -45,13 +51,13 @@ class Scraper:
             # self.driver = Remote(command_executor="http://localhost:4444", options=options)
             self.driver.implicitly_wait(0.5)
 
-    def fetch_page(self, url, use_header=False):
+    def fetch_page(self, url):
         try:
             if self.use_selenium:
                 self.driver.get(url)
                 page_source = self.driver.page_source
             else:
-                if use_header:
+                if self.use_header:
                     response = requests.get(url, headers=HEADERS)
                 else:
                     response = requests.get(url)
@@ -59,7 +65,7 @@ class Scraper:
 
                 if response.status_code == 404:
                     return None
-                
+
                 response.raise_for_status()
                 page_source = response.content
 
