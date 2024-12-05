@@ -3,6 +3,9 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 from src.scraper import Scraper
+from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
+import time
 
 load_dotenv()
 
@@ -58,14 +61,26 @@ def run(value):
 
     scrape_page(html)
 
+    productlink = []
+
     if len(pages) > 1:
         for i in range(2, 4):
             page = page_url.replace("?", f".{i}?")
+            productlink.append(page)
 
-            html = scraper.fetch_page(page)
-
+    print("Running threaded:")
+    threaded_start = time.time()
+    
+    with ThreadPoolExecutor() as executor:
+        futures = []
+        for url in productlink:
+            futures.append(executor.submit(scraper.fetch_page, url=url))
+        for future in concurrent.futures.as_completed(futures):
+            html = future.result()
             if html:
                 scrape_page(html)
+
+    print("Threaded time:", time.time() - threaded_start)
 
     scraper.close()
 
