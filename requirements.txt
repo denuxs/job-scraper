@@ -4,3 +4,4 @@ requests==2.32.3
 streamlit==1.39.0
 selenium==4.25.0
 webdriver-manager==4.0.2
+extra-streamlit-components==0.1.71
