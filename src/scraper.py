@@ -35,11 +35,13 @@ class Scraper:
         self.use_selenium = string_to_boolean(os.getenv("USE_SELENIUM"))
         self.use_header = use_header
         self.driver = None
+        self.session = requests.Session()
+        self.data = []
 
         if self.use_selenium:
             service = Service(ChromeDriverManager().install())
             options = ChromeOptions()
-            options.add_argument("--headless=new")
+            # options.add_argument("--headless=new")
 
             if self.use_header:
                 options.add_argument("--user-agent=%s" % random.choice(USER_AGENT))
@@ -58,9 +60,9 @@ class Scraper:
                 page_source = self.driver.page_source
             else:
                 if self.use_header:
-                    response = requests.get(url, headers=HEADERS)
+                    response = self.session.get(url, headers=HEADERS)
                 else:
-                    response = requests.get(url)
+                    response = self.session.get(url)
                 print(response.status_code)
 
                 if response.status_code == 404:
@@ -70,9 +72,9 @@ class Scraper:
                 page_source = response.content
 
                 # avoid ban :v
-                randomSleepTime = random.choice(self._sleepTime)
-                print(f"Esperando {randomSleepTime} segundos")
-                time.sleep(randomSleepTime)
+                # randomSleepTime = random.choice(self._sleepTime)
+                # print(f"Esperando {randomSleepTime} segundos")
+                # time.sleep(randomSleepTime)
 
             return BeautifulSoup(page_source, "html.parser")
 
@@ -85,5 +87,6 @@ class Scraper:
         return soup
 
     def close(self):
+        self.session.close()
         if self.use_selenium and self.driver is not None:
             self.driver.quit()
