@@ -24,8 +24,7 @@ def scrape_page(html):
         title = job.find("h2").get_text(strip=True)
         link = job.find("h2").a.get("href")
 
-        page = DOMAIN + link
-        link = f'<a href="{page}" target="_blank">Oferta</a>'
+        link = f'<a href="{DOMAIN}/{link}" target="_blank">Oferta</a>'
 
         detail = job.find(class_="job-overview")
         company = detail.find(class_="name").get_text(strip=True)

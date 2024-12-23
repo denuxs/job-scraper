@@ -1,4 +1,3 @@
-import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 import os
@@ -28,8 +27,7 @@ def scrape_page(html):
         location = job.find(class_="d3-ad-tile__location").get_text(strip=True)
         link = job.find(class_="d3-ad-tile__title").get("href")
 
-        page = DOMAIN + link
-        link = f'<a href="{page}" target="_blank">Oferta</a>'
+        link = f'<a href="{DOMAIN}/{link}" target="_blank">Oferta</a>'
 
         # if company not in companySkip:
         #     data.append([title, company, city, link, expires])
