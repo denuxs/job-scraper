@@ -25,7 +25,7 @@ def scrape_page(html):
     for job in jobs:
         title = job.find(class_="d3-ad-tile__title").get_text(strip=True)
         location = job.find(class_="d3-ad-tile__location").get_text(strip=True)
-        link = job.find(class_="d3-ad-tile__title").get("href")
+        link = job.find(class_="d3-ad-tile__description").get("href")
 
         link = f'<a href="{DOMAIN}/{link}" target="_blank">Oferta</a>'
 
